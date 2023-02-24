@@ -52,7 +52,7 @@ const saveToken = async (token, userId, expires, type, blacklisted = false) => {
  * @returns {Promise<Token>}
  */
 const verifyToken = async (token, type) => {
-  const payload = jwt.verify(token, config.jwt.secret);
+  const payload = jwt.verify(token, config.jwt.secret);console.log(payload);
   const tokenDoc = await Token.findOne({ token, type, user: payload.sub, blacklisted: false });
   if (!tokenDoc) {
     throw new Error('Token not found');
@@ -66,12 +66,13 @@ const verifyToken = async (token, type) => {
  * @returns {Promise<Object>}
  */
 const generateAuthTokens = async (user) => {
+  const userId = (user.id) ? user.id : user._additional.id;
   const accessTokenExpires = moment().add(config.jwt.accessExpirationMinutes, 'minutes');
-  const accessToken = generateToken(user._additional.id, accessTokenExpires, tokenTypes.ACCESS);
+  const accessToken = generateToken(userId, accessTokenExpires, tokenTypes.ACCESS);
 
   const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
-  const refreshToken = generateToken(user._additional.id, refreshTokenExpires, tokenTypes.REFRESH);
-  await saveToken(refreshToken, user._additional.id, refreshTokenExpires, tokenTypes.REFRESH);
+  const refreshToken = generateToken(userId, refreshTokenExpires, tokenTypes.REFRESH);
+  await saveToken(refreshToken, userId, refreshTokenExpires, tokenTypes.REFRESH);
 
   return {
     access: {

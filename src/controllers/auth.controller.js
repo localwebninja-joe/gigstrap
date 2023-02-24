@@ -15,6 +15,17 @@ const login = catchAsync(async (req, res) => {
   res.send({ user, tokens });
 });
 
+
+const logout = catchAsync(async (req, res) => {
+  await authService.logout(req.body.refreshToken);
+  res.status(httpStatus.NO_CONTENT).send();
+});
+
+const refreshTokens = catchAsync(async (req, res) => {
+  const tokens = await authService.refreshAuth(req.body.refreshToken);
+  res.send({ ...tokens });
+});
+
 const sendVerificationEmail = catchAsync(async (req, res) => {
   const verifyEmailToken = await tokenService.generateVerifyEmailToken(req.user);
   await emailService.sendVerificationEmail(req.user.email, verifyEmailToken);
@@ -24,5 +35,7 @@ const sendVerificationEmail = catchAsync(async (req, res) => {
 module.exports = {
   register,
   login,
+  logout,
+  refreshTokens,
   sendVerificationEmail,
 };

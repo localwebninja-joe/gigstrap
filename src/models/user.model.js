@@ -132,14 +132,14 @@ const isUsernameTaken = async function (username) {
     user = await client.graphql
     .get()
     .withClassName('User')
-    .withFields('uuid')
+    .withFields([ '_additional { id }', 'email'])
     .withWhere({
       operator: 'Equal',
-      path: ['username'],
+      path: ['id'],
       valueString: userId,
     })
     .do();
-    return user.data.Get.User;
+    return user.data.Get.User[0];
   } catch (error) {
     console.error(error);
   }
