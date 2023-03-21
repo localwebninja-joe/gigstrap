@@ -77,19 +77,34 @@ const schemaObj = {
  * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
  * @returns {Promise<boolean>}
  */
-const isEmailTaken = async function (email) {
+const isEmailTaken = async function (email, excludeUserId) {
   let user;
   try {
+    let operandList = [];
+    if (email) {
+      operandList.push({
+        path: ['email'],
+        operator: 'Equal',
+        valueString: email,
+      });
+    }
+
+    if (excludeUserId) {
+      operandList.push({
+        operator: 'Equal',
+        path: ['uuid'],
+        valueString: excludeUserId,
+      });
+    }
+
     user = await client.graphql
     .get()
     .withClassName('User')
     .withFields('email')
     .withWhere({
-      operator: 'Equal',
-      path: ['email'],
-      valueString: email,
-    })
-    .do();
+      operator: 'And',
+      operands: operandList
+    }).do();
     return user.data.Get.User.length > 0;
   } catch (error) {
     console.error(error);
@@ -132,7 +147,7 @@ const isUsernameTaken = async function (username) {
     user = await client.graphql
     .get()
     .withClassName('User')
-    .withFields([ '_additional { id }', 'email'])
+    .withFields([ '_additional { id }', 'email', 'firstname', 'lastname', 'password'])
     .withWhere({
       operator: 'Equal',
       path: ['id'],
@@ -156,7 +171,7 @@ const isUsernameTaken = async function (username) {
     user = await client.graphql
     .get()
     .withClassName('User') 
-    .withFields([ '_additional { id }', 'email', 'password'])
+    .withFields([ '_additional { id }', 'email', 'firstname', 'lastname', 'password'])
     .withWhere({
       operator: 'Equal',
       path: ['email'],
@@ -184,7 +199,7 @@ const isPasswordMatch = async function (password, user) {
 //     user.password = await bcrypt.hash(user.password, 8);
 //   }
 //   next();
-// });
+// }); data.password = await bcrypt.hash(data.password, 8);
 
 module.exports = {
   schemaObj,

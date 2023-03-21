@@ -1,7 +1,24 @@
 /* eslint-disable arrow-parens */
 const httpStatus = require('http-status');
-const { User } = require('../models');
+const { User, SocialCredential } = require('../models');
 const ApiError = require('../utils/ApiError');
+
+/**
+ * Create a user via social
+ * @param {Object} userBody
+ * @returns {Promise<User>}
+ */
+ const createUserViaSocial = async (userBody) => {
+  if (await User.isEmailTaken(userBody.email)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+  }
+
+  if (await SocialCredential.isSocialIdTaken(userBody.id, userBody.provider)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Social Id already taken');
+  }
+ 
+  return SocialCredential.createUserViaSocial(userBody);
+};
 
 /**
  * Create a user
@@ -86,6 +103,7 @@ const deleteUserById = async (userId) => {
 };
 
 module.exports = {
+  createUserViaSocial,
   createUser,
   queryUsers,
   getUserById,

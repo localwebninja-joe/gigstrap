@@ -12,6 +12,19 @@ const register = {
   }),
 };
 
+const socialRegistration = {
+  body: Joi.object().keys({
+    provider: Joi.string().required(),
+    socialId: Joi.string().required(),
+    email: Joi.string().required().email(),
+    name: Joi.object().keys({
+      givenName: Joi.string(),
+      familyName: Joi.string()
+    }),
+    profilePicture: Joi.string(),
+  }),
+};
+
 const login = {
   body: Joi.object().keys({
     email: Joi.string().required(),
@@ -38,6 +51,7 @@ const verifyEmail = {
 };
 
 module.exports = {
+  socialRegistration,
   register,
   login,
   logout,

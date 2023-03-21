@@ -7,6 +7,7 @@ const auth = require('../../middlewares/auth');
 const router = express.Router();
 
 router.post('/register', validate(authValidation.register), authController.register);
+router.post('/social-registration', validate(authValidation.socialRegistration), authController.socialRegistration);
 router.post('/login', validate(authValidation.login), authController.login);
 router.post('/logout', validate(authValidation.logout), authController.logout);
 router.post('/refresh-tokens', validate(authValidation.refreshTokens), authController.refreshTokens);
@@ -76,6 +77,63 @@ module.exports = router;
  *               properties:
  *                 user:
  *                   $ref: '#/components/schemas/User'
+ *                 tokens:
+ *                   $ref: '#/components/schemas/AuthTokens'
+ *       "400":
+ *         $ref: '#/components/responses/DuplicateEmail'
+ */
+
+/**
+ * @swagger
+ * /auth/social-registration:
+ *   post:
+ *     summary: Register as user via social media
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - provider
+ *               - socialId
+ *               - email
+ *               - name
+ *               - profilePicture
+ *             properties:
+ *               provider:
+ *                 type: string
+ *                 description: must be name of the social provider. ex. facebook, google, linkedin, twitter, etc..
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: must be unique for each social provider
+ *               socialId:
+ *                 type: string
+ *                 description: must be unique id for each social provider
+ *               name:
+ *                 type: string
+ *                 description: object of givenName and familyName
+ *               profilePicture:
+ *                 type: string
+ *                 description: object or string of profile picture url
+ *             example:
+ *               provider: 'facebook'
+ *               email: 'netzon.joe@gmail.com'
+ *               socialId: '6291075257603942'
+ *               name: {givenName: 'Joe Marie', familyName: 'Lui'}
+ *               profilePicture: 'https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=6291075257603942&height=200&width=200&ext=1681564757&hash=AeQrxTgnr4iEkFoin0I'
+ *     responses:
+ *       "201":
+ *         description: Created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   $ref: '#/components/schemas/SocialCredential'
  *                 tokens:
  *                   $ref: '#/components/schemas/AuthTokens'
  *       "400":

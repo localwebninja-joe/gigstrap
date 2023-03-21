@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+    <title>Node Authentication</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+        body        { padding-top:80px; word-wrap:break-word; }
+    </style>
+ 
+</head>
+<body>
+<div class="container">
+
+    <div class="page-header text-center">
+        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+    </div>
+
+    <div class="row">
+
+        <!-- GOOGLE INFORMATION -->
+        <div class="col-sm-6">
+            <div class="well">
+                <%if (profile == 'google') { %> 
+                    <h3 class="text-danger"><span class="fa fa-google-plus"></span> Google</h3>
+                <% } %> 
+                <%if (profile == 'facebook') { %> 
+                    <h3 class="text-primary"><span class="fa fa-facebook"></span> facebook</h3>
+                <% } %> 
+                <%if (profile == 'linkedin') { %> 
+                    <h3 class="text-primary"><span class="fa fa-linkedin"></span> linkedin</h3>
+                <% } %> 
+                <%if (profile == 'twitter') { %> 
+                    <h3 class="text-primary"><span class="fa fa-twitter"></span> twitter</h3>
+                <% } %> 
+                    <p>
+                        <strong>email</strong>: <%= email %><br>
+                        <strong>name</strong>: <%= name %><br>
+                        <strong>pic</strong>: <img src="<%=pic%>" width="100" height="100" alt="">
+                    </p>
+
+            </div>
+        </div>
+
+        <script type="text/javascript" nonce="<%= nonce %>">
+            // Test for the ugliness.
+            if (window.location.hash === "#_=_"){
+
+                // Check if the browser supports history.replaceState.
+                if (history.replaceState) {
+
+                    // Keep the exact URL up to the hash.
+                    var cleanHref = window.location.href.split("#")[0];
+
+                    // Replace the URL in the address bar without messing with the back button.
+                    history.replaceState(null, null, cleanHref);
+
+                } else {
+
+                    // Well, you're on an old browser, we can get rid of the _=_ but not the #.
+                    window.location.hash = "";
+
+                }
+
+            }
+
+            function myFunction() {
+                console.log("The page has loaded.");
+            }
+        </script>
+
+    </div>
+
+</div>
+
+</body>
+</html>

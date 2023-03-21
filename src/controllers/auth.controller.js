@@ -1,11 +1,17 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
-const { authService, userService, tokenService, emailService } = require('../services');
+const { authService, userService, tokenService, emailService, socialCredential } = require('../services');
 
 const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
   const tokens = await tokenService.generateAuthTokens(user);
   res.status(httpStatus.CREATED).send({ user, tokens });
+});
+
+const socialRegistration = catchAsync(async (req, res) => {
+  const user = await socialCredential.createUserViaSocial(req.body);
+  // const tokens = await tokenService.generateAuthTokens(user);
+  // res.status(httpStatus.CREATED).send({ user, tokens });
 });
 
 const login = catchAsync(async (req, res) => {
@@ -38,4 +44,5 @@ module.exports = {
   logout,
   refreshTokens,
   sendVerificationEmail,
+  socialRegistration,
 };

@@ -1,5 +1,5 @@
 const weaviate = require("weaviate-client");
-const { User, Token } = require('../models');
+const { User, Token, SocialCredential } = require('../models');
 const moment = require('moment');
 // set up client
 const client = weaviate.client({
@@ -10,7 +10,7 @@ const client = weaviate.client({
 
 
 const models = [
-  User, Token
+  User, Token, SocialCredential
 ];
 
 models.forEach(function(model){
